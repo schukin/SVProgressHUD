@@ -34,6 +34,12 @@ typedef NSUInteger SVProgressHUDMaskType;
 + (void)showErrorWithStatus:(NSString *)string;
 + (void)showImage:(UIImage*)image status:(NSString*)status; // use 28x28 white pngs
 
+// shows the status with no image; duration is computed based on number of words in string
++ (void)showStatusOnly:(NSString *)string;
+
+// shows the status with no image
++ (void)showStatusOnly:(NSString *)string duration:(NSTimeInterval)duration;
+
 + (void)dismiss;
 
 + (BOOL)isVisible;

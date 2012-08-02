@@ -103,6 +103,30 @@
     [[SVProgressHUD sharedView] showImage:image status:string duration:1.0];
 }
 
++ (void)showStatusOnly:(NSString *)string {
+    CGFloat duration = 1.0;             // Default duration is 1 sec
+    NSUInteger wordsPerSecond = 4;      // Average human reading speed is 4 words/sec
+    __block NSUInteger wordCount = 0;
+    
+    [string enumerateSubstringsInRange:NSMakeRange(0, [string length])
+                               options:NSStringEnumerationByWords|NSStringEnumerationSubstringNotRequired|NSStringEnumerationLocalized
+                            usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+        // Count the number of words in the string
+        wordCount++;
+    }];
+    
+    if (wordCount > 4) {
+        // If the string contains more than 4 words, re-compute the duration
+        duration = (CGFloat)wordCount / wordsPerSecond;
+    }
+    
+    [self showStatusOnly:string duration:duration];
+}
+
++ (void)showStatusOnly:(NSString *)string duration:(NSTimeInterval)duration {
+    [[SVProgressHUD sharedView] showImage:nil status:string duration:duration];
+}
+
 
 #pragma mark - Dismiss Methods
 
@@ -178,23 +202,31 @@
     CGFloat hudHeight = 100;
     CGFloat stringWidth = 0;
     CGFloat stringHeight = 0;
+    CGFloat stringY = 0;
     CGRect labelRect = CGRectZero;
     
     if(string) {
         CGSize stringSize = [string sizeWithFont:self.stringLabel.font constrainedToSize:CGSizeMake(200, 300)];
         stringWidth = stringSize.width;
         stringHeight = stringSize.height;
-        hudHeight = 80+stringHeight;
         
         if(stringWidth > hudWidth)
             hudWidth = ceil(stringWidth/2)*2;
         
+        if (self.imageView.hidden == YES) {
+            stringY = 10;
+            hudHeight = 20+stringHeight;
+        } else {
+            stringY = 66;
+            hudHeight = 80+stringHeight;
+        }
+        
         if(hudHeight > 100) {
-            labelRect = CGRectMake(12, 66, hudWidth, stringHeight);
+            labelRect = CGRectMake(12, stringY, hudWidth, stringHeight);
             hudWidth+=24;
         } else {
             hudWidth+=24;  
-            labelRect = CGRectMake(0, 66, hudWidth, stringHeight);   
+            labelRect = CGRectMake(0, stringY, hudWidth, stringHeight);   
         }
     }
 	
@@ -388,7 +420,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         self.imageView.image = image;
-        self.imageView.hidden = NO;
+        self.imageView.hidden = (self.imageView.image == nil);
         [self setStatus:string];
         [self.spinnerView stopAnimating];
         

@@ -11,6 +11,7 @@
 
 @implementation ViewController
 
+@synthesize textField;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return YES;
@@ -41,6 +42,10 @@
 
 - (void)dismissError {
 	[SVProgressHUD showErrorWithStatus:@"Failed with Error"];
+}
+
+- (IBAction)dismissStatusOnly {
+    [SVProgressHUD showStatusOnly:self.textField.text];
 }
 
 @end

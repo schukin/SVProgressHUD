@@ -10,12 +10,15 @@
 
 @interface ViewController : UIViewController
 
+@property (nonatomic, strong, readwrite) IBOutlet UITextField *textField;
+
 - (IBAction)show;
 - (IBAction)showWithStatus;
 
 - (IBAction)dismiss;
 - (IBAction)dismissSuccess;
 - (IBAction)dismissError;
+- (IBAction)dismissStatusOnly;
 
 @end
 
